@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Casa do Arroz · Funil de Vídeo + Display · Keepads</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#00CA9E; --green-d:#00a884; --green-soft:#e6faf5;
+  --ink:#0D0D0D; --txt:#0D0D0D; --mute:#6b7280; --line:#e8ebef;
+  --bg:#ffffff; --panel:#ffffff; --panel2:#f7f9fb; --red:#ef5b4c;
+  --meta:#0668E1; --meta-soft:#e8f1fe; --ytb:#EA4335; --ytb-soft:#fdeae7;
+  --gold:#d4a531; --gold-soft:#fff4d6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:'Poppins',system-ui,sans-serif;}
+.wrap{max-width:1240px;margin:0 auto;padding:34px 26px 60px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.logo b{color:var(--green)}
+.logo .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-left:1px}
+.tagline{font-size:10px;color:var(--mute);letter-spacing:2px;text-transform:uppercase;border-left:1px solid var(--line);padding-left:12px}
+.head h1{font-size:25px;font-weight:700;letter-spacing:-.5px}
+.head h1 b{color:var(--green-d)}
+.eyebrow{font-size:11px;letter-spacing:3px;color:var(--green-d);text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.sub{color:var(--mute);font-size:13px;margin-top:5px}
+.tag{font-size:11px;color:var(--green-d);border:1.5px solid var(--green);padding:6px 14px;border-radius:20px;background:var(--green-soft);font-weight:600}
+.tabs{display:flex;gap:8px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:none;color:var(--mute);font-size:13px;font-weight:600;padding:12px 20px;cursor:pointer;border-bottom:3px solid transparent;transition:.15s;font-family:inherit}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink);border-bottom-color:var(--green)}
+.tabnote{font-size:11px;color:var(--mute);font-style:italic;margin-bottom:24px}
+.view{display:none}.view.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.seyebrow{font-size:11px;letter-spacing:2.5px;color:var(--green-d);text-transform:uppercase;font-weight:700;margin:34px 0 16px;display:flex;align-items:center;gap:12px}
+.seyebrow::after{content:'';flex:1;height:1px;background:var(--line)}
+.seyebrow.ytb{color:var(--ytb)}
+.seyebrow.gold{color:var(--gold)}
+.seyebrow:first-child{margin-top:0}
+.concept{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:16px;padding:26px 28px;margin-bottom:8px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.concept h2{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:12px;letter-spacing:-.3px}
+.concept h2 span{color:var(--green-d)}
+.concept p{color:var(--mute);font-size:13.5px;line-height:1.75;margin-bottom:8px}
+.concept strong{color:var(--ink);font-weight:600}
+.concept-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.ci{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:18px}
+.ci-icon{font-size:20px;margin-bottom:8px}
+.ci-title{font-size:13px;font-weight:700;margin-bottom:5px}
+.ci-text{font-size:12px;color:var(--mute);line-height:1.6}
+.ci-text strong{color:var(--ink)}
+.notebox{background:var(--green-soft);border:1px solid var(--green);border-radius:12px;padding:14px 18px;font-size:13px;color:#1a3d35;line-height:1.65;margin-bottom:16px}
+.notebox strong{color:var(--green-d);font-weight:600}
+.notebox.blue{background:var(--meta-soft);border-color:#bcd9fb;color:#0d3b73}
+.notebox.blue strong{color:var(--meta)}
+.notebox.ytb{background:var(--ytb-soft);border-color:#f5c4bd;color:#7a241a}
+.notebox.ytb strong{color:var(--ytb)}
+.notebox.gold{background:var(--gold-soft);border-color:#e8cd7a;color:#7a5a12}
+.notebox.gold strong{color:#b8860b}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-bottom:6px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(13,13,13,.04);border-top:3px solid var(--green)}
+.kpi.b{border-top-color:var(--meta)}.kpi.r{border-top-color:var(--ytb)}.kpi.g{border-top-color:var(--gold)}
+.kpi .lbl{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.kpi .val{font-size:27px;font-weight:800;margin-top:8px;letter-spacing:-.5px;color:var(--ink)}
+.kpi .val.green{color:var(--green-d)}
+.kpi .val.red{color:var(--red)}
+.kpi .meta{font-size:11px;color:var(--mute);margin-top:4px}
+.kpi .delta{font-size:11.5px;font-weight:600;margin-top:6px}
+.up{color:var(--green-d)}.down{color:var(--red)}.neu{color:var(--gold)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.fcard.meta{border-top:3px solid var(--meta)}
+.fcard.ytb{border-top:3px solid var(--ytb)}
+.fc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.fc-title{font-size:15px;font-weight:700}
+.fc-sub{font-size:11px;color:var(--mute);margin-top:3px}
+.fp{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.fp-meta{background:var(--meta-soft);color:var(--meta)}
+.fp-ytb{background:var(--ytb-soft);color:var(--ytb)}
+.fp-disp{background:var(--green-soft);color:var(--green-d)}
+.fsteps{display:flex;flex-direction:column;gap:8px}
+.fstep{display:flex;align-items:center;gap:12px}
+.flabel-w{width:96px;flex-shrink:0}
+.flabel{font-size:10px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.4px}
+.fsublabel{font-size:9px;color:var(--mute)}
+.fbar-w{flex:1;background:var(--panel2);border-radius:6px;height:30px;overflow:hidden}
+.fbar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px}
+.fbar-text{font-weight:700;font-size:11.5px;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fbar-text.ink{color:var(--ink)}
+.fright{width:118px;flex-shrink:0;text-align:right}
+.fval{font-size:12.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.fpct{font-size:10px;color:var(--mute)}
+.fcost{font-size:10px;color:var(--green-d);margin-top:1px;font-weight:600}
+.fcost.red{color:var(--red)}
+.fsum{background:var(--panel2);border-radius:10px;padding:14px 16px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}
+.fsum-label{font-size:9.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.fsum-val{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.fsum-sub{font-size:10px;color:var(--mute)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px}
+.dcard{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.dc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.dc-title{font-size:15px;font-weight:700}
+.dc-sub{font-size:11px;color:var(--mute);margin-top:3px}
+.dr-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dr-bar-w{flex:1;background:var(--panel2);border-radius:6px;height:34px;overflow:hidden}
+.dr-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 12px}
+.dr-bar-text{font-weight:700;font-size:12.5px;white-space:nowrap;color:#fff}
+.dstats{background:var(--panel2);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ds-label{font-size:9.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;font-weight:600}
+.ds-val{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 1px 3px rgba(13,13,13,.04);margin-bottom:8px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:center;color:var(--mute);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.8px;padding:12px 10px;border-bottom:2px solid var(--line)}
+th.left{text-align:left}
+td{padding:11px 10px;border-bottom:1px solid var(--line);color:#374151;text-align:center;vertical-align:middle;font-variant-numeric:tabular-nums}
+td.left{text-align:left;color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--green-soft)}
+tr.total td{background:rgba(0,202,158,.06);font-weight:600}
+.pill{font-size:10px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
+.p-k{background:var(--green-soft);color:var(--green-d)}
+.p-m1{background:var(--meta-soft);color:var(--meta)}
+.p-m2{background:var(--gold-soft);color:#b8860b}
+.hi{color:var(--green-d);font-weight:700}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px}
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.qcard.meta{border-top:3px solid var(--meta)}
+.qcard.ytb{border-top:3px solid var(--ytb)}
+.q-label{font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:600}
+.q-val{font-size:27px;font-weight:800;color:var(--green-d);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.q-val.red{color:var(--red)}
+.q-val span{font-size:13px;color:var(--mute);font-weight:600}
+.q-sub{font-size:11px;color:var(--mute);margin-top:2px}
+.q-div{height:1px;background:var(--line);margin:12px 0}
+.q-comp{font-size:10px;color:var(--mute);margin-bottom:3px}
+.q-delta{font-size:12.5px;font-weight:700}
+.q-delta-sub{font-size:10px;color:var(--mute)}
+.totbox{background:var(--panel);border:1px solid var(--green);border-left:3px solid var(--green);border-radius:16px;padding:24px 28px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:center;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.tb-label{font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600}
+.tb-val{font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums}
+.tb-sub{font-size:12px;color:var(--mute);margin-top:6px}
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px}
+.cg3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:8px}
+.chartcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.chartcard h3{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:4px}
+.cdesc{font-size:11px;color:var(--mute);margin-bottom:16px}
+.cbox{position:relative;height:250px}
+.cbox-sm{position:relative;height:210px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px}
+.icard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.icard h3{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:14px}
+.ilist{display:flex;flex-direction:column;gap:10px}
+.iitem{display:flex;gap:11px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.iitem.win{border-left:3px solid var(--green)}
+.iitem.warn{border-left:3px solid var(--red)}
+.iitem.att{border-left:3px solid var(--gold)}
+.itext{font-size:12.5px;color:#374151;line-height:1.6}
+.itext strong{color:var(--ink);font-weight:600}
+.conc{background:var(--ink);border-radius:16px;padding:26px 30px;margin-bottom:8px}
+.conc h2{font-size:19px;font-weight:700;line-height:1.3;margin-bottom:14px;color:#fff;letter-spacing:-.3px}
+.conc h2 span{color:var(--green)}
+.conc p{font-size:13px;line-height:1.7;color:#cbd2d9;margin-bottom:10px}
+.conc p strong{color:#fff;font-weight:600}
+.conc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.cc{background:rgba(255,255,255,.05);border:1px solid rgba(0,202,158,.2);border-radius:12px;padding:14px}
+.cc-label{font-size:9.5px;color:#9aa4ad;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;font-weight:600}
+.cc-val{font-size:20px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+.cc-sub{font-size:10.5px;color:#9aa4ad;margin-top:2px}
+.foot{text-align:center;color:var(--mute);font-size:11px;margin-top:40px;letter-spacing:.5px;border-top:1px solid var(--line);padding-top:24px}
+.foot b{color:var(--green-d)}
+@media(max-width:880px){
+  .fgrid,.dgrid,.cg2,.igrid{grid-template-columns:1fr}
+  .cg3{grid-template-columns:1fr}
+  .qgrid{grid-template-columns:1fr 1fr}
+  .totbox,.conc-grid{grid-template-columns:1fr}
+  .concept-row{grid-template-columns:1fr}
+  .head h1{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <div class="brand"><span class="logo">keep<b>ads</b><span class="dot"></span></span><span class="tagline">Performance &amp; Estratégia</span></div>
+      <div class="eyebrow">Análise do Funil de Vídeo + Display · Meta &amp; Google Ads</div>
+      <h1>Dashboard de Tráfego · <b>Casa do Arroz Supermercados</b></h1>
+      <div class="sub">Barra do Piraí &amp; Valença · Meta Ads · YouTube Ads · Google Display</div>
+    </div>
+    <div class="tag" id="hTag">Mai × Jun 2026</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" data-period="marabr">Março × Abril</button>
+    <button class="tab active" data-period="maijun">Maio × Junho</button>
+  </div>
+  <div class="tabnote" id="tabNote">Junho parcial (01–22) · comparação em ritmo diário</div>
+
+  <!-- MARÇO × ABRIL -->
+  <div class="view" id="v-marabr">
+    <div class="seyebrow">01 · O que o funil de vídeo mede de verdade</div>
+    <div class="concept">
+      <h2>O anúncio não vende o produto. Ele vende a <span>lembrança que aparece na hora certa.</span></h2>
+      <p>A jornada de compra do consumidor de supermercado começa dias antes da visita. Na segunda ele vê o Reels com frango a R$ 8,99. Na sexta ele decide: <strong>"vou lá na Casa do Arroz"</strong>. O anúncio plantou a lembrança que inclinou a decisão.</p>
+      <div class="concept-row">
+        <div class="ci"><div class="ci-icon">📱</div><div class="ci-title" style="color:var(--meta)">Meta · Funil de Vídeo</div><div class="ci-text">Feed, Stories, Reels. <strong>Views 75%+ = lead qualificado do supermercado.</strong></div></div>
+        <div class="ci"><div class="ci-icon">📺</div><div class="ci-title" style="color:var(--ytb)">YouTube · Funil de Vídeo</div><div class="ci-text">Quem não pula escolheu assistir. <strong>~85% das views em TV.</strong></div></div>
+        <div class="ci"><div class="ci-icon">🌐</div><div class="ci-title" style="color:var(--green-d)">Google Display · Alcance</div><div class="ci-text">Banner em sites e apps. <strong>Mantém a marca presente no cotidiano.</strong></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow">02 · Indicadores-chave do bimestre</div>
+    <div class="kpis">
+      <div class="kpi g"><div class="lbl">Audiência qualif. (Abr)</div><div class="val green">90.075</div><div class="meta">Views 75%+ Meta + YTB</div><div class="delta up">↑ +301% vs Março</div></div>
+      <div class="kpi"><div class="lbl">Investimento Abril</div><div class="val">R$ 4.255</div><div class="meta">Meta + Google</div><div class="delta neu">Escala de teste</div></div>
+      <div class="kpi b"><div class="lbl">CPM Meta médio</div><div class="val">R$ 2,47</div><div class="meta">BP + VL Abril</div><div class="delta up">Excelente</div></div>
+      <div class="kpi r"><div class="lbl">CPV YouTube</div><div class="val">R$ 0,01</div><div class="meta">custo por view</div><div class="delta up">Melhor do mercado</div></div>
+      <div class="kpi g"><div class="lbl">Impressões Display</div><div class="val green">285k</div><div class="meta">top of mind visual</div><div class="delta neu">Novo em Abril</div></div>
+    </div>
+
+    <div class="seyebrow">03 · Meta Ads · Funil de vídeo por praça (Abril)</div>
+    <div class="notebox blue"><strong>Leitura:</strong> Views 75%+ é a audiência qualificada: pessoas com alta probabilidade de visitar a loja esta semana.</div>
+    <div class="fgrid">
+      <div class="fcard meta">
+        <div class="fc-head"><div><div class="fc-title">Barra do Piraí</div><div class="fc-sub">Investimento R$ 1.714,43 · Freq 2,82 · CPM R$ 2,46</div></div><span class="fp fp-meta">Meta Ads</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Alcance</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--meta)"><span class="fbar-text">247.051</span></div></div><div class="fright"><div class="fval">247.051</div><div class="fpct">100%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:27.6%;background:#7fb3f2"><span class="fbar-text">68.307</span></div></div><div class="fright"><div class="fval">68.307</div><div class="fpct">27,6%</div><div class="fcost">R$ 0,03</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 50%</div></div><div class="fbar-w"><div class="fbar" style="width:19.6%;background:#4fcab0"><span class="fbar-text">48.373</span></div></div><div class="fright"><div class="fval">48.373</div><div class="fpct">19,6%</div><div class="fcost">R$ 0,04</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:14.4%;background:var(--green)"><span class="fbar-text">35.527</span></div></div><div class="fright"><div class="fval hi">35.527</div><div class="fpct">14,4%</div><div class="fcost">R$ 0,05</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:9.1%;background:var(--gold)"><span class="fbar-text">22.482</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">22.482</div><div class="fpct">9,1%</div><div class="fcost">R$ 0,08</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Audiência qualificada 75%+</div><div class="fsum-val" style="color:var(--green-d)">35.527</div><div class="fsum-sub">prováveis visitantes</div></div><div style="text-align:right"><div class="fsum-label">Custo / qualificado</div><div class="fsum-val" style="color:var(--gold)">R$ 0,05</div></div></div>
+      </div>
+      <div class="fcard meta">
+        <div class="fc-head"><div><div class="fc-title">Valença</div><div class="fc-sub">Investimento R$ 1.493,75 · Freq 2,84 · CPM R$ 2,88</div></div><span class="fp fp-meta">Meta Ads</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Alcance</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--meta)"><span class="fbar-text">182.551</span></div></div><div class="fright"><div class="fval">182.551</div><div class="fpct">100%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:28.4%;background:#7fb3f2"><span class="fbar-text">51.872</span></div></div><div class="fright"><div class="fval">51.872</div><div class="fpct">28,4%</div><div class="fcost">R$ 0,03</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 50%</div></div><div class="fbar-w"><div class="fbar" style="width:19.8%;background:#4fcab0"><span class="fbar-text">36.157</span></div></div><div class="fright"><div class="fval">36.157</div><div class="fpct">19,8%</div><div class="fcost">R$ 0,04</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:14.3%;background:var(--green)"><span class="fbar-text">26.048</span></div></div><div class="fright"><div class="fval hi">26.048</div><div class="fpct">14,3%</div><div class="fcost">R$ 0,06</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:8.9%;background:var(--gold)"><span class="fbar-text">16.198</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">16.198</div><div class="fpct">8,9%</div><div class="fcost">R$ 0,09</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Audiência qualificada 75%+</div><div class="fsum-val" style="color:var(--green-d)">26.048</div><div class="fsum-sub">prováveis visitantes</div></div><div style="text-align:right"><div class="fsum-label">Custo / qualificado</div><div class="fsum-val" style="color:var(--gold)">R$ 0,06</div></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow ytb">04 · YouTube Ads · Funil de vídeo por praça (Abril)</div>
+    <div class="notebox ytb"><strong>Diferença do Meta:</strong> no YouTube tem o botão de pular. Quem não pulou já escolheu assistir, com retenção de 75–100% muito maior (43–48%).</div>
+    <div class="fgrid">
+      <div class="fcard ytb">
+        <div class="fc-head"><div><div class="fc-title">Barra do Piraí</div><div class="fc-sub">Google R$ 530,64 · Taxa 44,21% · CPV R$ 0,01</div></div><span class="fp fp-ytb">YouTube</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Impressões</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--ytb)"><span class="fbar-text">71.640</span></div></div><div class="fright"><div class="fval">71.640</div><div class="fpct">100%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Video Views</div></div><div class="fbar-w"><div class="fbar" style="width:44.2%;background:#f08a7e"><span class="fbar-text">31.673</span></div></div><div class="fright"><div class="fval">31.673</div><div class="fpct">44,2%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:33.8%;background:#f0b95e"><span class="fbar-text">24.200</span></div></div><div class="fright"><div class="fval">24.200</div><div class="fpct">76% v.</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:21.2%;background:var(--green)"><span class="fbar-text">15.200</span></div></div><div class="fright"><div class="fval hi">15.200</div><div class="fpct">48% v.</div><div class="fcost">R$ 0,03</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:19.3%;background:var(--gold)"><span class="fbar-text">13.800</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">13.800</div><div class="fpct">43,6% v.</div><div class="fcost">R$ 0,04</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Audiência qualificada 75%+</div><div class="fsum-val" style="color:var(--green-d)">15.200</div><div class="fsum-sub">48% ficou até o fim</div></div><div style="text-align:right"><div class="fsum-label">CPV</div><div class="fsum-val" style="color:var(--gold)">R$ 0,01</div></div></div>
+      </div>
+      <div class="fcard ytb">
+        <div class="fc-head"><div><div class="fc-title">Valença</div><div class="fc-sub">Google R$ 515,90 · Taxa 42,87% · CPV R$ 0,01</div></div><span class="fp fp-ytb">YouTube</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Impressões</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--ytb)"><span class="fbar-text">66.217</span></div></div><div class="fright"><div class="fval">66.217</div><div class="fpct">100%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Video Views</div></div><div class="fbar-w"><div class="fbar" style="width:42.9%;background:#f08a7e"><span class="fbar-text">28.387</span></div></div><div class="fright"><div class="fval">28.387</div><div class="fpct">42,9%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:32.3%;background:#f0b95e"><span class="fbar-text">21.400</span></div></div><div class="fright"><div class="fval">21.400</div><div class="fpct">75% v.</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:20.1%;background:var(--green)"><span class="fbar-text">13.300</span></div></div><div class="fright"><div class="fval hi">13.300</div><div class="fpct">47% v.</div><div class="fcost">R$ 0,04</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:18.1%;background:var(--gold)"><span class="fbar-text">12.000</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">12.000</div><div class="fpct">42% v.</div><div class="fcost">R$ 0,04</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Audiência qualificada 75%+</div><div class="fsum-val" style="color:var(--green-d)">13.300</div><div class="fsum-sub">47% ficou até o fim</div></div><div style="text-align:right"><div class="fsum-label">CPV</div><div class="fsum-val" style="color:var(--gold)">R$ 0,01</div></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow">05 · Google Display · Presença visual (Abril)</div>
+    <div class="notebox"><strong>Display não tem funil de vídeo, e está correto.</strong> O objetivo é presença visual de marca nos sites e apps do dia a dia. É o outdoor digital da Casa do Arroz.</div>
+    <div class="dgrid">
+      <div class="dcard">
+        <div class="dc-head"><div><div class="dc-title">Barra do Piraí · Display</div><div class="dc-sub">00_1 [DISPLAY] [ALCANCE] [BP] [AB]</div></div><span class="fp fp-disp">Display</span></div>
+        <div class="dr-row"><div class="dr-bar-w"><div class="dr-bar" style="width:100%;background:var(--green)"><span class="dr-bar-text">143.528 banners exibidos</span></div></div></div>
+        <div class="dstats"><div><div class="ds-label">Impressões</div><div class="ds-val" style="color:var(--green-d)">143.528</div></div><div><div class="ds-label">CPM est.</div><div class="ds-val" style="color:var(--gold)">R$ 1–2</div></div><div><div class="ds-label">Papel</div><div class="ds-val" style="font-size:13px">Top of mind</div></div></div>
+      </div>
+      <div class="dcard">
+        <div class="dc-head"><div><div class="dc-title">Valença · Display</div><div class="dc-sub">00_1 [DISPLAY] [ALCANCE] [VL] [AB]</div></div><span class="fp fp-disp">Display</span></div>
+        <div class="dr-row"><div class="dr-bar-w"><div class="dr-bar" style="width:98.8%;background:var(--green)"><span class="dr-bar-text">141.800 banners exibidos</span></div></div></div>
+        <div class="dstats"><div><div class="ds-label">Impressões</div><div class="ds-val" style="color:var(--green-d)">141.800</div></div><div><div class="ds-label">CPM est.</div><div class="ds-val" style="color:var(--gold)">R$ 1–2</div></div><div><div class="ds-label">Papel</div><div class="ds-val" style="font-size:13px">Top of mind</div></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow gold">06 · Audiência qualificada total (75%+)</div>
+    <div class="qgrid">
+      <div class="qcard meta"><div class="q-label">Meta · BP</div><div class="q-val">35.527</div><div class="q-sub">Views 75%+ Abril</div><div class="q-div"></div><div class="q-comp">vs. Março</div><div class="q-delta" style="color:var(--gold)">8.089 → 35.527</div><div class="q-delta-sub">+339%</div></div>
+      <div class="qcard meta"><div class="q-label">Meta · VL</div><div class="q-val">26.048</div><div class="q-sub">Views 75%+ Abril</div><div class="q-div"></div><div class="q-comp">vs. Março</div><div class="q-delta" style="color:var(--gold)">4.452 → 26.048</div><div class="q-delta-sub">+485%</div></div>
+      <div class="qcard ytb"><div class="q-label">YouTube · BP</div><div class="q-val">15.200</div><div class="q-sub">Views 75%+ Abril</div><div class="q-div"></div><div class="q-comp">vs. Março</div><div class="q-delta" style="color:var(--gold)">6.000 → 15.200</div><div class="q-delta-sub">+153%</div></div>
+      <div class="qcard ytb"><div class="q-label">YouTube · VL</div><div class="q-val">13.300</div><div class="q-sub">Views 75%+ Abril</div><div class="q-div"></div><div class="q-comp">vs. Março</div><div class="q-delta" style="color:var(--gold)">3.900 → 13.300</div><div class="q-delta-sub">+241%</div></div>
+    </div>
+    <div class="totbox">
+      <div><div class="tb-label">Total qualificados Abril</div><div class="tb-val" style="color:var(--green-d)">90.075</div><div class="tb-sub">memória profunda formada · Meta + YouTube</div></div>
+      <div><div class="tb-label">Total qualificados Março</div><div class="tb-val" style="color:var(--meta)">22.441</div><div class="tb-sub">sem Display em Março</div></div>
+      <div style="text-align:right"><div class="tb-label">Crescimento</div><div class="tb-val" style="color:var(--gold)">+301%</div><div class="tb-sub">22.441 → 90.075</div></div>
+    </div>
+
+    <div class="seyebrow">07 · Visualizações comparativas</div>
+    <div class="cg2">
+      <div class="chartcard"><h3>Funil Meta · Abril (BP vs VL)</h3><div class="cdesc">Comparativo por praça em cada estágio</div><div class="cbox"><canvas id="ma_metaFunil"></canvas></div></div>
+      <div class="chartcard"><h3>Funil YouTube · Abril (BP vs VL)</h3><div class="cdesc">Retenção dentro dos viewers</div><div class="cbox"><canvas id="ma_ytbFunil"></canvas></div></div>
+    </div>
+    <div class="cg3">
+      <div class="chartcard"><h3>Qualificados 75% · Mar vs Abr</h3><div class="cdesc">Crescimento por canal e praça</div><div class="cbox-sm"><canvas id="ma_qualif"></canvas></div></div>
+      <div class="chartcard"><h3>Google · YouTube vs Display</h3><div class="cdesc">Impressões por objetivo</div><div class="cbox-sm"><canvas id="ma_split"></canvas></div></div>
+      <div class="chartcard"><h3>Custo por qualificado (R$)</h3><div class="cdesc">Custo por view 75%</div><div class="cbox-sm"><canvas id="ma_custo"></canvas></div></div>
+    </div>
+
+    <div class="seyebrow">08 · Conclusão do bimestre</div>
+    <div class="conc">
+      <h2>Março → Abril: <span>+301% de audiência qualificada.</span></h2>
+      <p>O bimestre marcou o início da escala. Saímos de 22.441 para <strong>90.075 pessoas</strong> formando memória profunda de oferta, com CPM excelente (R$ 2,47) e CPV de R$ 0,01 no YouTube. O Display entrou em Abril somando 285k impressões de top of mind.</p>
+      <div class="conc-grid">
+        <div class="cc"><div class="cc-label">Qualificados Meta</div><div class="cc-val" style="color:var(--green)">61.575</div><div class="cc-sub">BP + VL Abril</div></div>
+        <div class="cc"><div class="cc-label">Qualificados YouTube</div><div class="cc-val" style="color:var(--green)">28.500</div><div class="cc-sub">BP + VL Abril</div></div>
+        <div class="cc"><div class="cc-label">Impressões Display</div><div class="cc-val" style="color:var(--gold)">285k</div><div class="cc-sub">Top of mind</div></div>
+        <div class="cc"><div class="cc-label">Crescimento</div><div class="cc-val" style="color:var(--gold)">+301%</div><div class="cc-sub">vs Março</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIO × JUNHO -->
+  <div class="view active" id="v-maijun">
+    <div class="seyebrow">01 · O que o funil de vídeo mede de verdade</div>
+    <div class="concept">
+      <h2>O anúncio não vende o produto. Ele vende a <span>lembrança que aparece na hora certa.</span></h2>
+      <p>A jornada de compra do consumidor de supermercado começa dias antes da visita. O anúncio planta a lembrança que inclina a decisão de ir à loja. <strong>Views 75%+ é o termômetro dessa lembrança.</strong></p>
+      <div class="notebox gold" style="margin-top:14px"><strong>⚠️ Comparação justa:</strong> Maio tem 31 dias, Junho tem 22 dias (01–22). Onde o volume importa, usamos ritmo diário. Eficiência (CPM, frequência, custo por view) já é comparável direto.</div>
+    </div>
+
+    <div class="seyebrow">02 · Indicadores-chave do bimestre</div>
+    <div class="kpis">
+      <div class="kpi g"><div class="lbl">Qualificados/dia (Jun)</div><div class="val green">1.799</div><div class="meta">Views 75%+ por dia</div><div class="delta down">↓ -29% vs Maio</div></div>
+      <div class="kpi"><div class="lbl">Frequência Meta</div><div class="val green">2,7</div><div class="meta">corrigida (era 3,4)</div><div class="delta up">✓ Saiu da saturação</div></div>
+      <div class="kpi b"><div class="lbl">CPM Meta médio</div><div class="val">R$ 3,07</div><div class="meta">BP + VL Junho</div><div class="delta up">Ainda excelente</div></div>
+      <div class="kpi r"><div class="lbl">Custo 75% VL</div><div class="val red">R$ 0,16</div><div class="meta">dobrou (era R$ 0,08)</div><div class="delta down">⚠ Fadiga criativo VL</div></div>
+      <div class="kpi r"><div class="lbl">CPV YouTube</div><div class="val green">R$ 0,01–0,02</div><div class="meta">estável</div><div class="delta up">Canal saudável</div></div>
+    </div>
+
+    <div class="seyebrow">03 · Meta Ads · Funil de vídeo por praça</div>
+    <div class="notebox blue"><strong>Comparação Maio × Junho dentro de cada funil.</strong> Frequência caiu nas duas praças (correção da saturação), mas Valença mostra sinais de fadiga de criativo (custo por view dobrou).</div>
+    <div class="fgrid">
+      <div class="fcard meta">
+        <div class="fc-head"><div><div class="fc-title">Barra do Piraí</div><div class="fc-sub">Mai R$ 2.133 · Freq 3,4 → Jun R$ 1.257 · Freq 2,69 ✓</div></div><span class="fp fp-meta">Meta Ads</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Alcance</div><div class="fsublabel">Mai → Jun</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--meta)"><span class="fbar-text">252.287 → 169.328</span></div></div><div class="fright"><div class="fval">252k → 169k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:28.7%;background:#7fb3f2"><span class="fbar-text">72.342 → 42.303</span></div></div><div class="fright"><div class="fval">72k → 42k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 50%</div></div><div class="fbar-w"><div class="fbar" style="width:19.7%;background:#4fcab0"><span class="fbar-text">49.726 → 26.431</span></div></div><div class="fright"><div class="fval">50k → 26k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:14.2%;background:var(--green)"><span class="fbar-text">35.946 → 19.130</span></div></div><div class="fright"><div class="fval hi">36k → 19k</div><div class="fcost">R$ 0,06 → 0,07</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:8.6%;background:var(--gold)"><span class="fbar-text">21.638 → 11.880</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">22k → 12k</div><div class="fcost">R$ 0,10 → 0,11</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Qualificados 75%/dia</div><div class="fsum-val" style="color:var(--green-d)">1.160 → 870</div><div class="fsum-sub">Mai/dia → Jun/dia (-25%)</div></div><div style="text-align:right"><div class="fsum-label">Frequência</div><div class="fsum-val" style="color:var(--green-d)">2,69 ✓</div><div class="fsum-sub">corrigida</div></div></div>
+      </div>
+      <div class="fcard meta">
+        <div class="fc-head"><div><div class="fc-title">Valença</div><div class="fc-sub">Mai R$ 1.807 · Freq 3,31 → Jun R$ 1.167 · Freq 2,79 ✓</div></div><span class="fp fp-meta">Meta Ads</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Alcance</div><div class="fsublabel">Mai → Jun</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--meta)"><span class="fbar-text">190.487 → 123.333</span></div></div><div class="fright"><div class="fval">190k → 123k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 25%</div></div><div class="fbar-w"><div class="fbar" style="width:26.7%;background:#7fb3f2"><span class="fbar-text">50.928 → 17.428</span></div></div><div class="fright"><div class="fval">51k → 17k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Views 50%</div></div><div class="fbar-w"><div class="fbar" style="width:17.8%;background:#4fcab0"><span class="fbar-text">33.869 → 10.198</span></div></div><div class="fright"><div class="fval">34k → 10k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:12.3%;background:var(--green)"><span class="fbar-text">23.438 → 7.442</span></div></div><div class="fright"><div class="fval hi">23k → 7k</div><div class="fcost red">R$ 0,08 → 0,16 ⚠</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:7.5%;background:var(--gold)"><span class="fbar-text">14.307 → 4.306</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">14k → 4k</div><div class="fcost red">R$ 0,13 → 0,27 ⚠</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Qualificados 75%/dia</div><div class="fsum-val" style="color:var(--red)">756 → 338</div><div class="fsum-sub">Mai/dia → Jun/dia (-55%)</div></div><div style="text-align:right"><div class="fsum-label">Frequência</div><div class="fsum-val" style="color:var(--green-d)">2,79 ✓</div><div class="fsum-sub">corrigida</div></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow ytb">04 · YouTube Ads · Funil de vídeo por praça</div>
+    <div class="notebox ytb"><strong>O canal mais estável da operação.</strong> Taxa de visualização preservada (43–45%), CPV constante. Em ritmo diário, os qualificados se mantiveram.</div>
+    <div class="fgrid">
+      <div class="fcard ytb">
+        <div class="fc-head"><div><div class="fc-title">Barra do Piraí</div><div class="fc-sub">Mai R$ 204,77 · Taxa 42,53% → Jun R$ 144,26 · Taxa 43,63%</div></div><span class="fp fp-ytb">YouTube</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Impressões</div><div class="fsublabel">Mai → Jun</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--ytb)"><span class="fbar-text">43.622 → 30.096</span></div></div><div class="fright"><div class="fval">44k → 30k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Video Views</div></div><div class="fbar-w"><div class="fbar" style="width:43%;background:#f08a7e"><span class="fbar-text">18.552 → 13.131</span></div></div><div class="fright"><div class="fval">18,5k → 13k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:20%;background:var(--green)"><span class="fbar-text">8.700 → 6.300</span></div></div><div class="fright"><div class="fval hi">8,7k → 6,3k</div><div class="fcost">46,88% → 48,27%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:17.9%;background:var(--gold)"><span class="fbar-text">7.800 → 5.700</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">7,8k → 5,7k</div><div class="fcost">42% → 43,6%</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Qualificados 75%/dia</div><div class="fsum-val" style="color:var(--green-d)">281 → 286 ✓</div><div class="fsum-sub">estável em ritmo</div></div><div style="text-align:right"><div class="fsum-label">CPV</div><div class="fsum-val" style="color:var(--gold)">R$ 0,01</div></div></div>
+      </div>
+      <div class="fcard ytb">
+        <div class="fc-head"><div><div class="fc-title">Valença</div><div class="fc-sub">Mai R$ 433,66 · Taxa 46,06% → Jun R$ 216,57 · Taxa 44,96%</div></div><span class="fp fp-ytb">YouTube</span></div>
+        <div class="fsteps">
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Impressões</div><div class="fsublabel">Mai → Jun (YTB)</div></div><div class="fbar-w"><div class="fbar" style="width:100%;background:var(--ytb)"><span class="fbar-text">46.792 → 29.200</span></div></div><div class="fright"><div class="fval">47k → 29k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel">Video Views</div></div><div class="fbar-w"><div class="fbar" style="width:46%;background:#f08a7e"><span class="fbar-text">21.552 → 13.605</span></div></div><div class="fright"><div class="fval">21,5k → 13,6k</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--green-d)">Views 75% ★</div></div><div class="fbar-w"><div class="fbar" style="width:23%;background:var(--green)"><span class="fbar-text">10.800 → 6.700</span></div></div><div class="fright"><div class="fval hi">10,8k → 6,7k</div><div class="fcost">50,21% → 49,21%</div></div></div>
+          <div class="fstep"><div class="flabel-w"><div class="flabel" style="color:var(--gold)">Views 100% ★</div></div><div class="fbar-w"><div class="fbar" style="width:21%;background:var(--gold)"><span class="fbar-text">9.900 → 6.100</span></div></div><div class="fright"><div class="fval" style="color:var(--gold)">9,9k → 6,1k</div><div class="fcost">45,73% → 44,87%</div></div></div>
+        </div>
+        <div class="fsum"><div><div class="fsum-label">Qualificados 75%/dia</div><div class="fsum-val" style="color:var(--green-d)">348 → 305</div><div class="fsum-sub">leve queda em ritmo</div></div><div style="text-align:right"><div class="fsum-label">CPV</div><div class="fsum-val" style="color:var(--gold)">R$ 0,02</div></div></div>
+      </div>
+    </div>
+
+    <div class="seyebrow gold">05 · Audiência qualificada total (75%+)</div>
+    <div class="qgrid">
+      <div class="qcard meta"><div class="q-label">Meta · BP</div><div class="q-val">19.130</div><div class="q-sub">Views 75%+ Jun (22d)</div><div class="q-div"></div><div class="q-comp">Maio: 35.946 (31d)</div><div class="q-delta" style="color:var(--gold)">870/dia vs 1.160/dia</div><div class="q-delta-sub">-25% em ritmo</div></div>
+      <div class="qcard meta"><div class="q-label">Meta · VL</div><div class="q-val red">7.442</div><div class="q-sub">Views 75%+ Jun (22d)</div><div class="q-div"></div><div class="q-comp">Maio: 23.438 (31d)</div><div class="q-delta" style="color:var(--red)">338/dia vs 756/dia</div><div class="q-delta-sub">-55% ⚠ fadiga</div></div>
+      <div class="qcard ytb"><div class="q-label">YouTube · BP</div><div class="q-val">6.300</div><div class="q-sub">Views 75%+ Jun (22d)</div><div class="q-div"></div><div class="q-comp">Maio: 8.700 (31d)</div><div class="q-delta" style="color:var(--green-d)">286/dia vs 281/dia</div><div class="q-delta-sub">+2% estável ✓</div></div>
+      <div class="qcard ytb"><div class="q-label">YouTube · VL</div><div class="q-val">6.700</div><div class="q-sub">Views 75%+ Jun (22d)</div><div class="q-div"></div><div class="q-comp">Maio: 10.800 (31d)</div><div class="q-delta" style="color:var(--gold)">305/dia vs 348/dia</div><div class="q-delta-sub">-12% em ritmo</div></div>
+    </div>
+    <div class="totbox">
+      <div><div class="tb-label">Qualificados Maio (31d)</div><div class="tb-val" style="color:var(--meta)">78.884</div><div class="tb-sub">2.545 por dia · Meta + YouTube</div></div>
+      <div><div class="tb-label">Qualificados Junho (22d)</div><div class="tb-val" style="color:var(--green-d)">39.572</div><div class="tb-sub">1.799 por dia · Meta + YouTube</div></div>
+      <div style="text-align:right"><div class="tb-label">Variação em ritmo</div><div class="tb-val" style="color:var(--red)">-29%</div><div class="tb-sub">queda concentrada em Valença</div></div>
+    </div>
+
+    <div class="seyebrow">06 · Visualizações comparativas</div>
+    <div class="cg2">
+      <div class="chartcard"><h3>Qualificados 75%/dia · Mai vs Jun</h3><div class="cdesc">Ritmo diário por canal e praça (comparação justa)</div><div class="cbox"><canvas id="mj_ritmo"></canvas></div></div>
+      <div class="chartcard"><h3>Frequência Meta · Mai vs Jun</h3><div class="cdesc">Correção da saturação: de 3,3–3,4 para 2,7–2,8</div><div class="cbox"><canvas id="mj_freq"></canvas></div></div>
+    </div>
+    <div class="cg3">
+      <div class="chartcard"><h3>Custo por view 75% (R$)</h3><div class="cdesc">VL dobrou · fadiga de criativo</div><div class="cbox-sm"><canvas id="mj_custo"></canvas></div></div>
+      <div class="chartcard"><h3>Taxa de visualização YouTube</h3><div class="cdesc">Estável · canal saudável</div><div class="cbox-sm"><canvas id="mj_taxa"></canvas></div></div>
+      <div class="chartcard"><h3>Investimento/dia por canal</h3><div class="cdesc">Ritmo de investimento Mai vs Jun</div><div class="cbox-sm"><canvas id="mj_invest"></canvas></div></div>
+    </div>
+
+    <div class="seyebrow">07 · Diagnóstico e ações</div>
+    <div class="igrid">
+      <div class="icard">
+        <h3>✅ O que melhorou em Junho</h3>
+        <div class="ilist">
+          <div class="iitem win"><div class="itext"><strong>Frequência corrigida nas duas praças.</strong> BP de 3,4 → 2,69. VL de 3,31 → 2,79. Era o problema #1 de Maio (os conjuntos chegaram a freq. 9+). Saímos da zona de saturação.</div></div>
+          <div class="iitem win"><div class="itext"><strong>YouTube estável e saudável.</strong> Taxa de visualização preservada (43–45%), CPV constante. Em ritmo diário, os qualificados de BP até melhoraram (281 → 286/dia).</div></div>
+          <div class="iitem win"><div class="itext"><strong>CPM do Meta segue excelente.</strong> R$ 2,76 (BP) e R$ 3,39 (VL). CPM do YouTube VL melhorou (R$ 8,76 → R$ 7,16).</div></div>
+          <div class="iitem win"><div class="itext"><strong>Público consistente.</strong> ~62-63% mulher, faixa 25-34 dominante, TV principal no YouTube. A segmentação acerta a decisora de compra.</div></div>
+        </div>
+      </div>
+      <div class="icard">
+        <h3>⚠️ O que precisa de ação</h3>
+        <div class="ilist">
+          <div class="iitem warn"><div class="itext"><strong>Valença com fadiga de criativo.</strong> Custo por view 75% dobrou (R$ 0,08 → R$ 0,16). Audiência qualificada caiu -55%/dia. <strong>Renovar criativos de VL com urgência.</strong></div></div>
+          <div class="iitem warn"><div class="itext"><strong>Comunidade VL 0306 anômalo.</strong> R$ 281 gastos, freq. 4,34, mas 0 visualizações 50%. Rodando desde abril. <strong>Investigar e pausar.</strong></div></div>
+          <div class="iitem att"><div class="itext"><strong>Remarketing BP saturando.</strong> RMKT 30D com freq. 3,45 e campanha de remarketing com 5,1 (R$ 475). Aplicar cap de frequência.</div></div>
+          <div class="iitem att"><div class="itext"><strong>Qualificados caíram em ritmo (-29%/dia).</strong> A queda vem quase toda do Meta VL · resolver a fadiga recupera o número.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seyebrow">08 · Conclusão do bimestre</div>
+    <div class="conc">
+      <h2>Maio → Junho: <span>frequência corrigida, mas Valença pede criativo novo.</span></h2>
+      <p>O bimestre resolveu o maior problema de Maio: a <strong>saturação de frequência</strong>, que caiu de 3,3–3,4 para 2,7–2,8 nas duas praças. O YouTube se manteve como o canal mais estável · CPV de R$ 0,01–0,02 e taxa de visualização preservada.</p>
+      <p>O alerta fica por conta de <strong>Valença</strong>: o custo por audiência qualificada dobrou e o volume caiu -55% em ritmo diário. É fadiga clara de criativo. A ação prioritária do próximo bimestre é renovar a esteira de criativos de VL e aplicar cap de frequência no remarketing de BP.</p>
+      <div class="conc-grid">
+        <div class="cc"><div class="cc-label">Qualificados/dia Jun</div><div class="cc-val" style="color:var(--green)">1.799</div><div class="cc-sub">vs 2.545/dia Maio</div></div>
+        <div class="cc"><div class="cc-label">Frequência Meta</div><div class="cc-val" style="color:var(--green)">2,7 ✓</div><div class="cc-sub">corrigida (era 3,4)</div></div>
+        <div class="cc"><div class="cc-label">Custo 75% VL</div><div class="cc-val" style="color:#f88">R$ 0,16</div><div class="cc-sub">dobrou · fadiga</div></div>
+        <div class="cc"><div class="cc-label">Investimento Jun</div><div class="cc-val">R$ 2.785</div><div class="cc-sub">22 dias (R$ 127/dia)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><b>keepads</b> · Análise do funil de vídeo + display · Registro de reuniões 2026 · Consistência. Disciplina. Resultado.</div>
+</div>
+
+<script>
+const periodConfig = {
+  marabr: { tag:'Mar × Abr 2026', note:'Bimestre fechado · meses completos' },
+  maijun: { tag:'Mai × Jun 2026', note:'Junho parcial (01–22) · comparação em ritmo diário' }
+};
+let chartsRendered = { marabr:false, maijun:false };
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  const p=b.dataset.period;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); document.getElementById('v-'+p).classList.add('active');
+  document.getElementById('hTag').textContent=periodConfig[p].tag;
+  document.getElementById('tabNote').textContent=periodConfig[p].note;
+  if(!chartsRendered[p]){ renderCharts(p); chartsRendered[p]=true; }
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const GREEN='#00CA9E',GREEND='#00a884',INK='#0D0D0D',RED='#ef5b4c',MUTE='#6b7280',GOLD='#d4a531',META='#0668E1',METAL='#7fb3f2',YTB='#EA4335';
+Chart.defaults.color=MUTE; Chart.defaults.font.family="'Poppins',sans-serif"; Chart.defaults.font.size=11;
+const grid={color:'rgba(13,13,13,.06)'};
+const TT={backgroundColor:'#fff',titleColor:INK,bodyColor:'#374151',borderColor:'#e8ebef',borderWidth:1,padding:10,cornerRadius:8,displayColors:true};
+const SC={x:{grid:{display:false},ticks:{color:MUTE}},y:{grid:grid,ticks:{color:MUTE}}};
+
+function renderCharts(p){ if(p==='marabr') renderMarAbr(); if(p==='maijun') renderMaiJun(); }
+
+function renderMarAbr(){
+  new Chart(document.getElementById('ma_metaFunil'),{type:'bar',data:{labels:['Alcance','V25%','V50%','V75%','V100%'],datasets:[
+    {label:'Barra do Piraí',data:[247051,68307,48373,35527,22482],backgroundColor:META,borderRadius:5},
+    {label:'Valença',data:[182551,51872,36157,26048,16198],backgroundColor:GREEN,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:12,font:{size:11}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')}`}}},scales:SC}});
+  new Chart(document.getElementById('ma_ytbFunil'),{type:'bar',data:{labels:['Impr.','Views','V25%','V75%','V100%'],datasets:[
+    {label:'Barra do Piraí',data:[71640,31673,24200,15200,13800],backgroundColor:YTB,borderRadius:5},
+    {label:'Valença',data:[66217,28387,21400,13300,12000],backgroundColor:GREEN,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:12,font:{size:11}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')}`}}},scales:SC}});
+  new Chart(document.getElementById('ma_qualif'),{type:'bar',data:{labels:['Meta BP','Meta VL','YTB BP','YTB VL'],datasets:[
+    {label:'Março',data:[8089,4452,6000,3900],backgroundColor:METAL,borderRadius:4},
+    {label:'Abril',data:[35527,26048,15200,13300],backgroundColor:GREEN,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:10,font:{size:10}}},tooltip:TT},scales:SC}});
+  new Chart(document.getElementById('ma_split'),{type:'doughnut',data:{labels:['Display BP','Display VL','YouTube BP','YouTube VL'],datasets:[{data:[143528,141800,71640,66217],backgroundColor:[GREEN,'#7fe0cb',YTB,'#f5a99f'],borderColor:'#fff',borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:MUTE,padding:8,font:{size:10}}},tooltip:{...TT,callbacks:{label:c=>` ${c.parsed.toLocaleString('pt-BR')} impr.`}}}}});
+  new Chart(document.getElementById('ma_custo'),{type:'bar',data:{labels:['Meta BP','Meta VL','YTB BP','YTB VL'],datasets:[{data:[0.05,0.06,0.03,0.04],backgroundColor:[META,METAL,YTB,'#f5a99f'],borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`R$ ${c.parsed.y.toFixed(2)}`}}},scales:{x:{grid:{display:false},ticks:{color:MUTE,font:{size:10}}},y:{grid:grid,ticks:{color:MUTE,callback:v=>`R$ ${v.toFixed(2)}`},max:0.10}}}});
+}
+
+function renderMaiJun(){
+  new Chart(document.getElementById('mj_ritmo'),{type:'bar',data:{labels:['Meta BP','Meta VL','YTB BP','YTB VL'],datasets:[
+    {label:'Maio (/dia)',data:[1160,756,281,348],backgroundColor:METAL,borderRadius:4},
+    {label:'Junho (/dia)',data:[870,338,286,305],backgroundColor:GREEN,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:12,font:{size:11}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y} qualif./dia`}}},scales:SC}});
+  new Chart(document.getElementById('mj_freq'),{type:'bar',data:{labels:['Meta BP','Meta VL'],datasets:[
+    {label:'Maio',data:[3.4,3.31],backgroundColor:RED,borderRadius:5},
+    {label:'Junho',data:[2.69,2.79],backgroundColor:GREEN,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:12,font:{size:11}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: freq. ${c.parsed.y}`}}},scales:{...SC,y:{...SC.y,max:4}}}});
+  new Chart(document.getElementById('mj_custo'),{type:'bar',data:{labels:['Meta BP','Meta VL','YTB BP','YTB VL'],datasets:[
+    {label:'Maio',data:[0.06,0.08,0.02,0.02],backgroundColor:METAL,borderRadius:4},
+    {label:'Junho',data:[0.07,0.16,0.02,0.02],backgroundColor:c=>c.raw>=0.15?RED:GREEN,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:10,font:{size:10}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: R$ ${c.parsed.y.toFixed(2)}`}}},scales:{x:{grid:{display:false},ticks:{color:MUTE,font:{size:10}}},y:{grid:grid,ticks:{color:MUTE,callback:v=>`R$ ${v.toFixed(2)}`},max:0.18}}}});
+  new Chart(document.getElementById('mj_taxa'),{type:'bar',data:{labels:['YTB BP','YTB VL'],datasets:[
+    {label:'Maio',data:[42.53,46.06],backgroundColor:METAL,borderRadius:5},
+    {label:'Junho',data:[43.63,44.96],backgroundColor:GREEN,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:10,font:{size:10}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`}}},scales:{x:{grid:{display:false},ticks:{color:MUTE,font:{size:10}}},y:{grid:grid,ticks:{color:MUTE,callback:v=>`${v}%`},min:35,max:50}}}});
+  new Chart(document.getElementById('mj_invest'),{type:'bar',data:{labels:['Meta BP','Meta VL','YTB BP','YTB VL'],datasets:[
+    {label:'Maio (/dia)',data:[68.83,58.29,6.61,13.99],backgroundColor:METAL,borderRadius:4},
+    {label:'Junho (/dia)',data:[57.14,53.03,6.56,9.84],backgroundColor:GREEN,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:MUTE,padding:10,font:{size:10}}},tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: R$ ${c.parsed.y.toFixed(2)}/dia`}}},scales:{x:{grid:{display:false},ticks:{color:MUTE,font:{size:10}}},y:{grid:grid,ticks:{color:MUTE,callback:v=>`R$ ${v}`}}}}});
+}
+
+renderCharts('maijun'); chartsRendered.maijun=true;
+</script>
+</body>
+</html>
