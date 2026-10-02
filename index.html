@@ -1595,7 +1595,10 @@ function gMet(a,nome,b){
   m.r75   = m.v25>0 ? m.v75/m.v25*100 : null;
   m.r100  = m.v25>0 ? m.v100/m.v25*100 : null;
   m.cpv   = m.views>0 ? m.custo/m.views : null;
+  m.cpv25 = m.v25>0 ? m.custo/m.v25 : null;
+  m.cpv50 = m.v50>0 ? m.custo/m.v50 : null;
   m.cpv75 = m.v75>0 ? m.custo/m.v75 : null;
+  m.cpv100= m.v100>0 ? m.custo/m.v100 : null;
   m.ctr   = m.impr>0 ? (m.cliques||m.inter)/m.impr*100 : null;
   m.cpc   = (m.cliques||m.inter)>0 ? m.custo/(m.cliques||m.inter) : null;
   m.vis   = m.impr>0 ? m.imprv/m.impr*100 : null;
@@ -1860,23 +1863,25 @@ function gRenderCmp(){
   var f=M[0], l=M[M.length-1], jan=f.name+' a '+l.name;
   var cards='<div class="tcards">'
     +trendCard('Verba', f.custo, l.custo, function(v){ return br(v,0); }, 0, jan)
-    +trendCard('Pessoas únicas', f.accUsers, l.accUsers, kk, 1, jan)
-    +trendCard('Frequência', f.accFreq, l.accFreq, function(v){ return nf(v,2); }, 0, 'por pessoa na quinzena')
-    +trendCard('CPM', f.cpm, l.cpm, function(v){ return br(v,2); }, -1, 'quanto menor, melhor')
-    +trendCard('Retenção 75%', f.r75||0, l.r75||0, function(v){ return pc(v,1); }, 1, 'de quem passou dos 25%')
+    +trendCard('Alcance', f.accUsers, l.accUsers, kk, 1, 'pessoas únicas · '+jan)
+    +trendCard('Custo por mil alcançados', f.accCpmil||0, l.accCpmil||0, function(v){ return br(v,2); }, -1, 'quanto menor, melhor')
+    +trendCard('Visualização 100%', f.v100, l.v100, kk, 1, 'viu a oferta inteira')
+    +trendCard('Custo por 100%', f.cpv100||0, l.cpv100||0, function(v){ return br(v,3); }, -1, 'quanto menor, melhor')
     +'</div><div style="height:16px"></div>';
   var cols=[
     {h:'Verba', f:'custo', good:0, r:function(x){ return '<b>'+br(x.custo,0)+'</b>'; }},
-    {h:'Pessoas únicas', f:'accUsers', good:1, r:function(x){ return x.accUsers?kk(x.accUsers):'—'; }},
-    {h:'Frequência', f:'accFreq', good:0, r:function(x){ return x.accFreq===null?'—':nf(x.accFreq,2); }},
-    {h:'Custo/mil pessoas', f:'accCpmil', good:-1, r:function(x){ return x.accCpmil===null?'—':br(x.accCpmil,2); }},
+    {h:'Alcance', f:'accUsers', good:1, r:function(x){ return x.accUsers?kk(x.accUsers):'—'; }},
+    {h:'Custo/mil alcançados', f:'accCpmil', good:-1, r:function(x){ return x.accCpmil===null?'—':br(x.accCpmil,2); }},
     {h:'Impressões', f:'impr', good:1, r:function(x){ return kk(x.impr); }},
     {h:'CPM', f:'cpm', good:-1, r:function(x){ return br(x.cpm,2); }},
-    {h:'Visualizações', f:'views', good:1, r:function(x){ return kk(x.views); }},
-    {h:'Atenção 25%', f:'at25', good:1, r:function(x){ return x.at25===null?'—':pc(x.at25,1); }},
-    {h:'Retenção 75%', f:'r75', good:1, r:function(x){ return x.r75===null?'—':pc(x.r75,1); }},
-    {h:'Viu até o fim', f:'r100', good:1, r:function(x){ return x.r100===null?'—':pc(x.r100,1); }},
-    {h:'Custo/75%', f:'cpv75', good:-1, r:function(x){ return x.cpv75===null?'—':br(x.cpv75,3); }}
+    {h:'Visualização 25%', f:'v25', good:1, r:function(x){ return kk(x.v25); }},
+    {h:'Custo/25%', f:'cpv25', good:-1, r:function(x){ return x.cpv25===null?'—':br(x.cpv25,3); }},
+    {h:'Visualização 50%', f:'v50', good:1, r:function(x){ return kk(x.v50); }},
+    {h:'Custo/50%', f:'cpv50', good:-1, r:function(x){ return x.cpv50===null?'—':br(x.cpv50,3); }},
+    {h:'Visualização 75%', f:'v75', good:1, r:function(x){ return kk(x.v75); }},
+    {h:'Custo/75%', f:'cpv75', good:-1, r:function(x){ return x.cpv75===null?'—':br(x.cpv75,3); }},
+    {h:'Visualização 100%', f:'v100', good:1, r:function(x){ return kk(x.v100); }},
+    {h:'Custo/100%', f:'cpv100', good:-1, r:function(x){ return x.cpv100===null?'—':br(x.cpv100,3); }}
   ];
   var tb='<table class="cmp"><thead><tr><th class="mcol">Mês</th>';
   cols.forEach(function(c){ tb+='<th class="num">'+esc(c.h)+'</th>'; });
@@ -1891,9 +1896,9 @@ function gRenderCmp(){
   });
   tb+='</tbody></table>';
   el.innerHTML=cards
-    +'<div class="card"><h3>Mês a mês no Google</h3>'
-    +'<div class="hint">A seta compara com o mês anterior. Verde é melhora: volume e taxa subindo, custo caindo. '
-    +'Pessoas únicas e frequência vêm das quinzenas fechadas, então só aparecem em mês completo. '
+    +'<div class="card"><h3>Mês a mês no Google: as etapas do funil e o custo de cada uma</h3>'
+    +'<div class="hint">As mesmas etapas do funil de vídeo, com o custo unitário ao lado de cada uma. A seta compara com o mês anterior. Verde é melhora: volume subindo, custo caindo. '
+    +'O alcance vem do total de conta das quinzenas fechadas, então só aparece em mês completo. '
     +'Recorte atual: <b>'+(GRED==='TODAS'?'YouTube e Display':GRED)+(GPRC==='TODAS'?'':' · '+esc(GPRC))+'</b>.</div>'
     +'<div class="tbl-wrap">'+tb+'</div></div>';
 }
